@@ -1,7 +1,128 @@
-TO DO:
+============================================
+fuzzySim v3.0 (committed 2020-02-03) -> CRAN
+============================================
 
-* stepByStep:
-- implement 'direction = both'
+## Modified functions:
+
+* gridRecords
+- added 'na.rm' argument (default TRUE)
+- fixed bug when no gridded absences (i.e. no absence AND not presence)
+
+
+## Other changes:
+
+-  clarifications and typo/format corrections in the manual
+
+
+============================================
+fuzzySim v2.5 (committed 2020-01-31)
+============================================
+
+## Modified files:
+
+* gridRecords.Rd
+- added examples
+
+
+============================================
+fuzzySim v2.2.4 (committed 2020-01-30)
+============================================
+
+## New functions:
+
+* gridRecords
+
+
+## Modified functions:
+
+* getPreds:
+- replaced 'if("raster" %in% class(data))' (no longer working) with 'if (is(data, "RasterStack"))'
+- added 'Imports: methods' to DESCRIPTION and 'importFrom("methods", "is")' to NAMESPACE
+- if 'data' are raster, added 'raster::' before 'stack'
+
+
+============================================
+fuzzySim v2.2.3 (committed 2020-01-06)
+============================================
+
+## Modified functions:
+
+* multGLM:
+- fixed id.col name in 'predictions' when id.col input as character
+
+## Other changes:
+
+- added 'inst' folder with article citation information
+- removed 'onAttach' function with citation message on load
+- added package URLs to DESCRIPTION file
+
+
+============================================
+fuzzySim v2.2.2 (committed 2020-01-03)
+============================================
+
+## Modified functions:
+
+* multGLM:
+- output now includes list of selected variables per model
+- sp.cols, var.cols and id.col can now optionally be input as column names rather than index numbers
+
+
+## Other changes:
+
+- fixed length of some lines along the PDF manual
+
+
+============================================
+fuzzySim v2.2.1 (committed 2019-10-18)
+============================================
+
+## Modified functions:
+
+* modOverlap:
+- corrected typo in na.rm closing parentheses (reported by Heidi Mod)
+
+* Fav:
+- slightly reduced probabilities of exactly 1, which would cause division by zero (resulting Fav is still 1)
+
+
+============================================
+fuzzySim v2.2 (committed 2019-03-10)
+============================================
+
+## New functions:
+
+* sharedFav
+
+
+============================================
+fuzzySim v2.1 (committed 2019-03-07)
+============================================
+
+## New functions:
+
+* favClass
+* bioThreat
+
+
+## Modified functions:
+
+* multGLM:
+- spatial_trend variable in models (when TSA=TRUE and the spatial trend is selected) now named after the response variable (e.g. 'sptrend_giraffe')
+
+* getPreds:
+- fixed new bug by replacing 'if (class(data) == "RasterStack")' with 'if ("RasterStack" %in% class(data))'
+
+
+## Modified .Rd files:
+
+* multGLM:
+- added example with TSA=TRUE
+
+
+## Other changes:
+
+- updated maintainer e-mail address
 
 
 ============================================
@@ -13,6 +134,8 @@ fuzzySim v2.0 (committed 2018-12-05)
 * multTSA:
 - resulting model object now named 'models' rather than 'TSA.models'
 - corrected bug in coordinate polynomial names (if save.models = TRUE)
+
+## package sent to CRAN
 
 
 ============================================
