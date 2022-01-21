@@ -2,7 +2,7 @@ FDR <- function (data = NULL, sp.cols = NULL, var.cols = NULL, pvalues = NULL,
                  model.type = NULL, family = "auto", correction = "fdr", q = 0.05,
                  verbose = TRUE, simplif = FALSE)
   
-  # version 3.6 (26 Apr 2016)
+  # version 3.7 (3 Sep 2021)
   
 {
   if (length(sp.cols) > 1)
@@ -12,12 +12,13 @@ FDR <- function (data = NULL, sp.cols = NULL, var.cols = NULL, pvalues = NULL,
   
   model.type <- "GLM"  # it's always GLM, even for LM; family is what may change
   
-  n.init <- nrow(data)
-  data <- data[is.finite(data[ , sp.cols]), ]
-  na.loss <- n.init - nrow(data)
-  if (na.loss > 0) message(na.loss, " cases excluded due to missing or non-finite values.")
+  # n.init <- nrow(data)
+  # data <- data[is.finite(data[ , sp.cols]), ]
+  # na.loss <- n.init - nrow(data)
+  # if (na.loss > 0) message(na.loss, " cases excluded due to missing or non-finite values.")
+  # -> MOVED FURTHER BELOW (if null pvalues)
   
-  if (family == "auto") {  # not all families are available in auto!
+  if (family == "auto" & is.null(pvalues)) {  # not all families are available in auto!
     if (all(data[ , sp.cols] %in% c(0, 1)))  family <- "binomial"
     else if (all(data[ , sp.cols] >= 0 && data[ , sp.cols] %% 1 == 0))  family <- "poisson"
     else family <- "gaussian"
@@ -30,11 +31,17 @@ FDR <- function (data = NULL, sp.cols = NULL, var.cols = NULL, pvalues = NULL,
   predictors <- data[, var.cols]
   
   if (!is.null(pvalues)) {
+    if (!is.null(data) | !is.null(sp.cols) | !is.null(var.cols)) message("Argments 'data', 'sp.cols' and 'var.cols' are ignored when 'pvalues' is provided.")
+    
     coeffs <- aic <- bic <- FALSE
     p.bivar <- pvalues[, 2]
     names(p.bivar) <- pvalues[, 1]
     
-  } else {  # if !null pvalues
+  } else {  # if null pvalues
+    n.init <- nrow(data)
+    data <- data[is.finite(data[ , sp.cols]), ]
+    na.loss <- n.init - nrow(data)
+    if (na.loss > 0) message(na.loss, " cases excluded due to missing or non-finite values.")
     
     coeffs <- aic <- bic <- TRUE
     if (is.null(ncol(predictors)))
@@ -65,7 +72,7 @@ FDR <- function (data = NULL, sp.cols = NULL, var.cols = NULL, pvalues = NULL,
       if (is.na(aic.bivar[i]))
         message("BIC could not be calculated for var.col number", i)
     }; rm(i)
-  }
+  }  # end if null pvalues
   
   if (coeffs) {
     results <- data.frame(cbind(coef.bivar, aic.bivar, bic.bivar, p.bivar), row.names = names(predictors))
@@ -79,9 +86,10 @@ FDR <- function (data = NULL, sp.cols = NULL, var.cols = NULL, pvalues = NULL,
     #results[, "symbol"] [results[, "p.adjusted"] < 0.01] <- "**"
     #results[, "symbol"] [results[, "p.adjusted"] < 0.001] <- "***"
   } else {  # if !coeffs
-    results <- data.frame(AIC = aic.bivar, BIC = bic.bivar, p.value = p.bivar, row.names = pvalues[, 1])
+    if (aic | bic)  results <- data.frame(AIC = aic.bivar, BIC = bic.bivar, p.value = p.bivar, row.names = pvalues[, 1])
+    else results <- data.frame(p.value = p.bivar, row.names = pvalues[, 1])
     #results <- data.frame(p.value = results[order(results[, "p.value"]), ])
-    results <- results[order(results[, "p.value"]), ]
+    results <- results[order(results[, "p.value"]), , drop = FALSE]
     results[, "p.adjusted"] <- p.adjust(results[, "p.value"],
                                         method = correction)
   }

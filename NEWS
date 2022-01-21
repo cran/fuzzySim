@@ -1,3 +1,105 @@
+
+============================================
+fuzzySim v3.7 (committed 2022-01-21)
+============================================
+
+## Modified functions:
+
+* corSelect
+- fixed new CRAN check error (with 'all.equal' in 'corSelect') on r-devel-linux-x86_64-fedora-clang and r-devel-linux-x86_64-fedora-gcc (by manually setting the 'tolerance' argument for 'all.equal')
+
+* Fav
+- added import modEvA::mod2obspred
+
+
+## Other modified files:
+
+* fuzsim.Rd
+- updated Sorensen wikipedia link with 'https'
+
+
+============================================
+fuzzySim v3.6 (committed 2021-09-29)
+============================================
+
+## Modified functions:
+
+* Fav
+- 'model' argument can now be of class 'glm', 'gam', 'gbm', 'randomForest' or 'bart'
+- 'pred' can now also be a 'SpatRaster' ('terra' pkg) object
+
+* gridRecords
+- 'rst' can now also be a 'SpatRaster' ('terra' pkg) object
+- Raster* 'rst' coerced to SpatRaster if 'terra' pkg is installed
+
+
+============================================
+fuzzySim v3.5 (committed 2021-09-04)
+============================================
+
+## Modified functions:
+
+* FDR
+- fixed bug when using 'pvalues' as input (following bug report by Stephen via modTools contact form)
+
+
+============================================
+fuzzySim v3.4 (committed 2021-09-02)
+============================================
+
+## Modified functions:
+
+* gridRecords
+- fixed bug when only one raster layer [ , drop = FALSE]
+
+
+============================================
+fuzzySim v3.3 (committed 2021-04-24)
+============================================
+
+## Modified functions:
+
+* simMat
+- added 'verbosity' argument
+- replaced "25%-50%-75% done" with 'utils::txtProgressBar'
+
+* multTSA
+- added 'verbosity' argument
+
+* getPreds
+- added 'verbosity' argument
+- 'data' can now also be a RasterBrick (not only dataframe or a RasterStack)
+
+* Fav
+- added 'verbosity' argument
+- 'pred' can now also be a RasterLayer (not only a numeric vector)
+
+
+============================================
+fuzzySim v3.2 (committed 2020-12-12)
+============================================
+
+## Modified functions:
+
+* favClass (benefitting also bioThreat)
+- added 'is.na(fav) | ' to 'stopifnot' to avoid NA fail
+
+
+## Other changes:
+
+- added Linero et al. (2020) to references of papers using fuzzySim
+
+
+============================================
+fuzzySim v3.1 (committed 2020-09-18)
+============================================
+
+## Modified functions:
+
+* gridRecords
+- added 'absences' logical argument
+
+
 ============================================
 fuzzySim v3.0 (committed 2020-02-03) -> CRAN
 ============================================
