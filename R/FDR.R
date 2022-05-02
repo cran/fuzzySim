@@ -2,9 +2,10 @@ FDR <- function (data = NULL, sp.cols = NULL, var.cols = NULL, pvalues = NULL,
                  model.type = NULL, family = "auto", correction = "fdr", q = 0.05,
                  verbose = TRUE, simplif = FALSE)
   
-  # version 3.7 (3 Sep 2021)
+  # version 3.9 (2 May 2022)
   
 {
+  
   if (length(sp.cols) > 1)
     stop("Sorry, FDR is currently implemented for only one response variable at a time, so 'sp.cols' must indicate only one column")
   
@@ -12,15 +13,19 @@ FDR <- function (data = NULL, sp.cols = NULL, var.cols = NULL, pvalues = NULL,
   
   model.type <- "GLM"  # it's always GLM, even for LM; family is what may change
   
+  data <- as.data.frame(data)
+  
   # n.init <- nrow(data)
   # data <- data[is.finite(data[ , sp.cols]), ]
   # na.loss <- n.init - nrow(data)
   # if (na.loss > 0) message(na.loss, " cases excluded due to missing or non-finite values.")
   # -> MOVED FURTHER BELOW (if null pvalues)
   
-  if (family == "auto" & is.null(pvalues)) {  # not all families are available in auto!
-    if (all(data[ , sp.cols] %in% c(0, 1)))  family <- "binomial"
-    else if (all(data[ , sp.cols] >= 0 && data[ , sp.cols] %% 1 == 0))  family <- "poisson"
+  if (family == "auto" && is.null(pvalues)) {  # not all families are available in auto!
+    vals <- which(is.finite(data[ , sp.cols]))
+    if (all(data[vals, sp.cols] %in% c(0, 1)))  family <- "binomial"
+    else if (all(data[vals, sp.cols] >= 0) && all(data[vals, sp.cols] %% 1 == 0))  family <- "poisson"
+    else if (all(data[vals, sp.cols] >= 0))  family <- "Gamma"
     else family <- "gaussian"
     if (verbose) message("\nUsing generalized linear models of family '", family, "'.\n")
   }

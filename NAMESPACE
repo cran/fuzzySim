@@ -5,7 +5,7 @@ importFrom("methods", "is")
 importFrom("modEvA", "mod2obspred")
 importFrom("stats", "anova", "as.formula", "binomial", "cor", "dist",
            "extractAIC", "fitted", "glm", "lm", "na.omit", "nobs", "p.adjust",
-           "p.adjust.methods", "poly", "predict", "step", "update", 
+           "p.adjust.methods", "poly", "predict", "quantile", "step", "update", 
            "na.pass", "t.test")
 importFrom("utils", "combn", "installed.packages", "read.csv", "stack",
            "write.csv", "setTxtProgressBar", "txtProgressBar")

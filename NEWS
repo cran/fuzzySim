@@ -1,6 +1,102 @@
+============================================
+fuzzySim v4.0 (committed 2022-05-02) -> CRAN
+============================================
+
+## New functions:
+
+* prevalence (copied from 'modEvA' pkg)
+
+
+## Modified functions:
+
+* bioThreat
+- "white" changed to "grey" for 0-values to be visible on the map
+
+* corSelect, FDR, fuzzyOverlay, integerCols, multConvert, multGLM, multicol, multTSA, simMat, splist2presabs, stepByStep, transpose
+- added data=as.data.frame(data), to avoid errors when input is tibble
+
+* bioThreat, Fav, favClass, fuzSim, fuzzyRangeChange, modOverlap, sharedFav, spCodes
+- added 'unlist' to avoid obscure error when input is one-column tibble instead of vector
+
 
 ============================================
-fuzzySim v3.7 (committed 2022-01-21)
+fuzzySim v3.96 (committed 2022-03-22)
+============================================
+
+## Modified functions:
+
+* sharedFav
+- improved help file and corrected a mistake (bug report by Alba Estrada)
+- replaced 'main' argument with '...' for barplot (to accept also 'las')
+- plot now produced in phases as computations are made, to have something plotted even in case of error
+- 'conf' can be set to NA, to avoid error and still get values and plot (without CIs)
+- returned value now includes 'FOvI' and 'bins_table'
+
+
+============================================
+fuzzySim v3.95 (committed 2022-03-22)
+============================================
+
+## New functions:
+
+* rarity
+
+* vulnerability
+
+* entropy
+
+
+## Modified functions:
+
+* spCodes
+- added 'verbosity' argument
+- 'cat' now used instead of red 'message' when OK no dupl codes
+
+* corSelect
+- replaced '...' with arguments 'use' and 'method', the former defaulting to "pairwise.complete.obs"
+
+* simMat
+- added 'na.omit' to 'data' in 'stopifnot', to avoid error when NAs
+
+* sharedFav
+- added 'bin_interval' argument, for now accepting only '0.1' (the default, for back-compatibility) or 'quantiles'
+- added Note to help file about possible error when overly small bins
+
+
+============================================
+fuzzySim v3.9 (committed 2022-03-13)
+============================================
+
+## Modified functions:
+
+* gridRecords
+- result now ordered by "cells" column, instead of presences then absences
+- help file "Examples" changed to "elev" raster for more clarity
+- included also example with multiple species
+
+* corSelect
+- added 'family' argument (to pass to FDR when 'sp.col' is not NULL)
+- fixed NA 'excluded.vars' output when input 'var.cols' is character
+
+* FDR
+- added 'Gamma' for positive non-integer responses when family = "auto"
+
+
+============================================
+fuzzySim v3.8 (committed 2022-02-05)
+============================================
+
+## Modified functions:
+
+* gridRecords
+- added 'species' argument for multi-species gridding
+- 'pres.coords' (and 'abs.coords' if not NULL) automatically converted with 'as.data.frame'
+- changed 'raster' to 'terra' in help file "Examples"
+- fixed bug that did not grid absence.coords (if not NULL)
+
+
+============================================
+fuzzySim v3.7 (committed 2022-01-21) -> CRAN
 ============================================
 
 ## Modified functions:
