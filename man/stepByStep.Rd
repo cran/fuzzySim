@@ -8,20 +8,21 @@ This function builds a generalized linear model with forward stepwise inclusion 
 }
 \usage{
 stepByStep(data, sp.col, var.cols, family = binomial(link = "logit"), 
-Favourability = FALSE, trace = 0, cor.method = "pearson")
+Favourability = FALSE, trace = 0, direction = "forward", k = 2, 
+cor.method = "pearson")
 }
 \arguments{
   \item{data}{
 a data frame containing your target and predictor variables.
 }
   \item{sp.col}{
-index number of the column of 'data' that contains the target variable.
+name or index number of the column of 'data' that contains the response variable.
 }
   \item{var.cols}{
-index numbers of the columns of 'data' that contain the predictor variables.
+names or index numbers of the columns of 'data' that contain the predictor variables.
 }
   \item{family}{
-argument to be passed to the \code{\link{glm}} function indicating the family (and error distribution) to use in modelling. The default is binomial distribution with logit link (for binary target variables).
+argument to be passed to the \code{\link{glm}} function indicating the family (and error distribution) to use in modelling. The default is binomial distribution with logit link (for binary response variables).
 }
   \item{Favourability}{
 logical, whether to apply the \code{\link{Fav}}ourability function to remove the effect of prevalence from predicted probability (Real et al. 2006). Applicable only to binomial GLMs. Defaults to FALSE.
@@ -29,12 +30,18 @@ logical, whether to apply the \code{\link{Fav}}ourability function to remove the
   \item{trace}{
 argument to pass to the \code{\link{step}} function. If positive, information is printed during the stepwise procedure. Larger values may give more detailed information. The default is 0 (silent).
 }
+  \item{direction}{
+argument to pass to the \code{\link{step}} function. Implementation contributed by Alba Estrada. Can be "forward" (the default, for back-compatibility with former versions of 'stepByStep'), "backward", or "both".
+}
+  \item{k}{
+argument to pass to the \code{\link{step}} function indicating the multiple of the number of degrees of freedom used for the penalty. The default is 2, which yields the original AIC. You can use larger values for a more stringent selection-- e.g., for a critical p-value of 0.05, use k = qchisq(0.05, 1, lower.tail = F).
+}
   \item{cor.method}{
-character string to pass to function \code{\link{cor}} indicating which coefficient should be used for correlating predictions at each step with those of the final model. Can be "pearson" (the default), "kendall", or "spearman".
+character string to pass to \code{\link{cor}} indicating which coefficient to use for correlating predictions at each step with those of the final model. Can be "pearson" (the default), "kendall", or "spearman".
 }
 }
 \details{
-Stepwise variable selection often includes more variables than would a model selected after examining all possible combinations of the variables (e.g. with packages \pkg{MuMIn} and \pkg{glmulti}). The 'stepByStep' function can be useful to assess if a stepwise model with just the first few variables could already provide predictions very close to the final ones (see e.g. Fig. 3 in Munoz et al., 2005). It can also be useful to see which variables determine the more general trends in the model predictions, and which just add (local) additional nuances.
+Stepwise variable selection often includes more variables than would a model selected after examining all possible combinations of the variables (e.g. with package \pkg{MuMIn} or \pkg{glmulti}). The 'stepByStep' function can be useful to assess if a stepwise model with just the first few variables could already provide predictions very close to the final ones (see e.g. Fig. 3 in Munoz et al., 2005). It can also be useful to see which variables determine the more general trends in the model predictions, and which variables just provide additional (local) nuances.
 }
 \value{
 This function returns a list of the following components:
@@ -66,6 +73,3 @@ cor.method = "spearman", Favourability = TRUE)
 stepByStep(data = rotif.env, sp.col = 9, var.cols = c(5:8, 10:17), 
 family = poisson)
 }
-\keyword{models}
-\keyword{regression}
-\keyword{multivariate}

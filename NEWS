@@ -1,4 +1,170 @@
 ============================================
+fuzzySim v4.9.2 (committed 2022-10-27)
+============================================
+
+## Modified functions:
+
+* multGLM
+- added 'FDR.first' argument
+
+
+## Other modified files:
+
+* multGLM.Rd
+- added recommendation to set trim=FALSE when select="p.value"
+- added JCG funding acknowledgment to Note
+
+* fuzSim.Rd
+- help file now mentions Jaccard and Sorensen also as recommended metrics for model evaluation 
+
+
+============================================
+fuzzySim v4.9.1 (committed 2022-10-13)
+============================================
+
+## Modified functions:
+
+* corSelect
+- added 'verbosity' argument
+- message emitted saying how many vars selected and excluded (like in 'FDR') if verbosity > 0
+- message emitted saying which vars selected and excluded if verbosity > 1
+
+* FDR
+- argument 'verbose' replaced with 'verbosity' (with warnings)
+- message emitted saying which vars selected and excluded if verbosity > 1
+
+* multGLM
+- argument 'verbose' for 'FDR' replaced with 'verbosity' (as per 'FDR' change above)
+- argument 'select' now accepts additional criterion "p.value", in which case 'stepwise' used instead of 'step'
+- added arguments test.in, test.out, p.in and p.out to pass to 'stepwise'
+- trim=TRUE reverts back to using 'modelTrim' (rather than 'stepwise' with direcction='backward' as in previous experimental versions)
+- argument trim.fun (added in previous experimental versions) removed
+
+
+============================================
+fuzzySim v4.9 (committed 2022-10-11)
+============================================
+
+## Modified functions:
+
+* summaryWald
+- fixed bug when model has no variables
+
+* stepwise
+- break loop when a variable simultanously meets the criteria for inclusion and exclusion
+
+
+## Other modified files:
+
+* stepwise
+- help file with new references (two against AIC, and one more against stepwise)
+
+
+============================================
+fuzzySim v4.8.1 (committed 2022-08-01)
+============================================
+
+## Modified functions:
+
+* gridRecords
+- moved if(na.rm) uppward to go back to using 5:ncol(result) instead of names(result), which was causing problems with some raster names (bug report by Alba Estrada)
+- ordered result by 'cell' and removed (confusing) row names
+- help file Examples now includes mapping multi-species gridded presences
+
+
+## Other modified files:
+
+* multGLM
+- help file notes that 'TSA' uses "type="Y" and is included in FDR, corSelect, etc.
+
+
+============================================
+fuzzySim v4.8 (committed 2022-07-21)
+============================================
+
+## Modified functions:
+
+* gridRecords
+- warning if 'species' (not character or) has leading/trailing spaces
+- added check.names=FALSE to data.frame call, so that output column names are exactly as the unique values of 'species' (even if they are numbers), and the first species name doesn't come out different from the rest
+- added last argument in abs.coords <- terra::crds(rst, df=TRUE, na.rm=FALSE), otherwise some rows with missing data in some variables would be missing from the result (bug report by Alba Estrada)
+
+
+## Other modified files:
+
+* multGLM
+- help file notes that 'modelTrim' and 'stepwise' have different default significance thresholds, to explain why 'stepwise' may leave more variables in the model
+
+
+============================================
+fuzzySim v4.7 (committed 2022-07-07)
+============================================
+
+## Modified functions:
+
+* multGLM
+- fixed message about N variables excluded by 'modelTrim' (now by trim.fun)
+- set trace=0 for 'stepwise'
+
+* fuzzyConsensus
+- changed default biplot to FALSE, as it makes function much slower
+
+* fuzzyRangeChange
+- changed "Stable presence" and "Stable absence" to "Stable positive" and "Stable negative" to avoid erroneous interpretations
+- added y axis label
+
+
+============================================
+fuzzySim v4.6 (committed 2022-07-05)
+============================================
+
+## New functions:
+
+* stepwise
+
+* summaryWald
+
+
+## Modified functions:
+
+* fuzzyRangeChange
+- added 'x.lab=TRUE' argument, so user can set to FALSE and add labels differently
+
+* stepByStep
+- added warning("'Favourability' is only applicable when family=binomial(link='logit'), so it was automatically set to FALSE.")
+
+* multGLM
+- added argument 'trim.fun="modelTrim', which can be changed to 'stepwise'
+
+
+============================================
+fuzzySim v4.5 (committed 2022-06-15)
+============================================
+
+## Modified functions:
+
+* stepByStep
+- added 'k' argument to pass to 'step' (allows approaching p<0.05; https://www.researchgate.net/post/Why-stepAIC-gives-a-model-with-insignificant-variables-in-the-summarymodel)
+- added 'direction' argument to pass to 'step' (implementation by Alba Estrada)
+
+
+============================================
+fuzzySim v4.4 (committed 2022-06-14)
+============================================
+
+## Modified functions:
+
+* fuzzyConsensus
+- 'cat' message now mentions the number of input vectors
+
+* multGLM
+- added 'cor.method' argument (for 'cor' via 'corSelect'; default "pearson")
+
+* stepByStep
+- 'sp.col' and 'var.cols' can now be column names, not just index numbers
+
+
+============================================
 fuzzySim v4.3 (committed 2022-06-01) -> CRAN
 ============================================
 

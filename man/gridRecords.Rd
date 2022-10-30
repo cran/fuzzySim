@@ -4,7 +4,7 @@
 Grid (or thin) point occurrence records to the resolution of a raster map
 }
 \description{
-This function takes a Raster* or SpatRaster object and a set of spatial coordinates of a species' presence (and optionally absence) records, and returns a data frame with the presences and absences as well as the corresponding values of the rasters in the grid of pixels (cells). This is analogous to removing duplicates and thinning points (both presences and absences) with a distance equal to the pixel size of the raster map(s) on which analysis will be based.
+This function takes a Raster* or a SpatRaster object and a set of spatial coordinates of a species' presence (and optionally absence) records, and returns a data frame with the presences and absences as well as the corresponding values of the rasters in the grid of pixels (cells). This is analogous to removing duplicates and thinning points (both presences and absences) with a distance equal to the pixel size of the raster map(s) on which analysis will be based.
 }
 \usage{
 gridRecords(rst, pres.coords, abs.coords = NULL, absences = TRUE, 
@@ -24,10 +24,10 @@ a matrix or data frame with two columns containing, respectively, the x and y, o
 logical value indicating whether pixels without presence records should be returned as absences. The default is TRUE.
 }
   \item{species}{
-(optional) character vector, of the same length as 'nrow(pres.coords)', indicating the species to which each pair of coordinates corresponds. Useful for gridding records of more than one species at a time. If specified, 'abs.coords' cannot be used.
+(optional) character vector, of the same length as 'nrow(pres.coords)', indicating the species to which each pair of coordinates corresponds. Useful for gridding records of more than one species at a time. Its unique values will be used as column names in the output. If 'species' is specified, 'abs.coords' cannot be used.
 }
   \item{na.rm}{
-Logical value indicating whether pixels without values in any of the 'rst' layers should be removed from the resulting data frame. The default is TRUE.
+Logical value indicating whether pixels with NA in all of the 'rst' layers should be excluded from the output data frame. The default is TRUE.
 }
 }
 \details{
@@ -35,7 +35,7 @@ See e.g. Baez et al. (2020), where this function was used to get unique presence
 }
 \value{
 This function returns a data frame with the following columns:
-\item{'presence'}{integer, 1 for the cells (pixels) with at least one presence point, and 0 for the cells without any presence point (if absences = TRUE) or with at least one absence point (if 'abs.coords' are provided) AND with no presence points. If the 'species' argument is provided, instead of 'presence' you get one column named as each species.}
+\item{'presence'}{integer, 1 for the cells (pixels) with at least one presence point, and (if absences=TRUE) 0 for the cells without any presence point, or with at least one absence point (if 'abs.coords' are provided) AND no presence points. If the 'species' argument is provided, instead of 'presence' you get one column named as each species.}
 \item{'x', 'y'}{centroid coordinates of each cell (pixel).}
 \item{'cell'}{the pixel identifier in 'rst'.}
 \item{one column for each layer in 'rst'}{value of each pixel for each layer.}
@@ -68,12 +68,15 @@ set.seed(123)
 presences <- terra::spatSample(as.polygons(r), 100)
 set.seed(456)
 absences <- terra::spatSample(as.polygons(r), 70)
+
+# add these points to the map:
 points(presences, pch = 20, cex = 0.3, col = "black")
 points(absences, pch = 20, cex = 0.3, col = "white")
 
-# use 'gridRecords' on these random points:
+# use 'gridRecords' on these points:
 gridded_pts <- gridRecords(rst = r, pres.coords = terra::crds(presences), 
 abs.coords = terra::crds(absences))
+
 head(gridded_pts)
 
 # map the gridded points (presences black, absences white):
@@ -85,7 +88,9 @@ points(gridded_pts[ , c("x", "y")], col = gridded_pts$presence)
 # all pixels without presence points are returned as absences:
 
 gridded_pres <- gridRecords(rst = r, pres.coords = terra::crds(presences))
+
 head(gridded_pres)
+
 plot(r)
 points(presences, pch = 20, cex = 0.2, col = "black")
 points(gridded_pres[ , c("x", "y")], col = gridded_pres$presence)
@@ -96,11 +101,20 @@ points(gridded_pres[ , c("x", "y")], col = gridded_pres$presence)
 # by adding a 'species' argument
 
 presences$species <- rep(c("species1", "species2", "species3"), each = 33)
-data.frame(presences)
-plot(r)
+
+values(presences)
+
+plot(r, col = hcl.colors(n = 100, palette = "blues"))
 plot(presences, col = as.factor(presences$species), add = TRUE)
+
 gridded_pres_mult <- gridRecords(rst = r, pres.coords = terra::crds(presences), 
 species = presences$species)
+
 head(gridded_pres_mult)
+
+# add each each species' gridded presences to the map:
+points(gridded_pres_mult[gridded_pres_mult[ , 1] == 1, c("x", "y")], col = 1, pch = 1)
+points(gridded_pres_mult[gridded_pres_mult[ , 2] == 1, c("x", "y")], col = 2, pch = 2)
+points(gridded_pres_mult[gridded_pres_mult[ , 3] == 1, c("x", "y")], col = 3, pch = 3)
 }
 }
