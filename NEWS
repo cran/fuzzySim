@@ -1,4 +1,134 @@
 ==============================================
+fuzzySim v4.10.5 (committed 2023-10-04)
+==============================================
+
+## Modified functions:
+
+* corSelect
+- added 'cor' to 'select' criteria
+
+* getPreds
+- replaced 'requireNamespace(raster)' with 'raster %in% rownames(installed.packages())', to avoid loading the pkg if unnecessary
+
+
+==============================================
+fuzzySim v4.10.4 (committed 2023-09-28)
+==============================================
+
+## Modified functions:
+
+* cleanCoords
+- added 'year.min' and 'year.na.pass' arguments
+
+
+==============================================
+fuzzySim v4.10.3 (committed 2023-09-25)
+==============================================
+
+## Modified functions:
+
+* appendData
+- added 'add.source' argument
+- x and y arguments renamed to data1 and data2
+- warning when no matching columns
+- out data frame created empty, instead of taking data1 values and then converting to NA
+
+* gridRecords
+- replaced 'requireNamespace(raster)' with 'raster %in% rownames(installed.packages())', to avoid loading 'sp' and triggering all the deprecation warnings
+
+
+# Other modified files:
+
+* cleanCoords.Rd
+- now states that row names are carried from input dataframe
+
+
+==============================================
+fuzzySim v4.10.2 (committed 2023-09-23)
+==============================================
+
+## New functions:
+
+* appendData
+
+
+==============================================
+fuzzySim v4.10.1 (committed 2023-07-04)
+==============================================
+
+## Modified functions:
+
+* cleanCoords
+- added 'terra::' before plot() on SpatVector objects, to prevent newly appeared error
+
+
+# Other modified files:
+
+* Fav.Rd
+- now states that 'model' or 'pred' must have been obtained with weights=NULL
+
+* corSelect.Rd
+- added "however" references against dropping correlated variables
+
+
+==============================================
+fuzzySim v4.10 (committed 2023-05-24)
+==============================================
+
+## Modified functions:
+
+* multGLM
+- added 'coeff' argument to pass to 'corSelect', and changed 'cor.thresh' default accordingly
+- precluded error when no variables pass corSelect
+
+
+==============================================
+fuzzySim v4.9.13 (committed 2023-05-22)
+==============================================
+
+## Modified functions:
+
+* corSelect
+- fixed bug that didn't allow correctly reporting the selected variables when coeff=FALSE
+
+
+==============================================
+fuzzySim v4.9.12 (committed 2023-05-21)
+==============================================
+
+## Modified functions:
+
+* corSelect
+- added 'coeff' argument; if FALSE, high correlations are identified based on p-value (not coefficient) of correlation
+- 'p.value' column added to 'high.correlations' output table
+- fixed bug when there's >1 categorical variable to exclude a priori
+
+
+==============================================
+fuzzySim v4.9.11 (committed 2023-05-17)
+==============================================
+
+## Modified functions:
+
+* multGLM
+- warning emitted if select="p.value" and trim=TRUE
+- started implementation of 'block.cols' argument (still not useable)
+
+
+==============================================
+fuzzySim v4.9.10 (committed 2023-04-21)
+==============================================
+
+## Modified functions:
+
+* corSelect
+- 'select' default now VIF if 'sp.cols' is null
+- 'select' can now be null
+- message displayed saying what 'select' criterion was used
+- help file updated accordingly
+
+
+==============================================
 fuzzySim v4.9.9 (committed 2023-04-14) -> CRAN
 ==============================================
 
@@ -96,7 +226,7 @@ fuzzySim v4.9.4 (committed 2023-01-12)
 - replaced 'PBSmapping' (and consequently 'sp' and 'maptools') with 'terra' (future-proof and much faster)
 
 
-# Other modified fiels:
+# Other modified files:
 
 * DESCRIPTION
 - packages 'PBSmapping', 'sp' and 'maptools' removed from 'Suggests'
@@ -139,7 +269,7 @@ fuzzySim v4.9.2 (committed 2022-10-27)
 - added JCG funding acknowledgment to Note
 
 * fuzSim.Rd
-- help file now mentions Jaccard and Sorensen also as recommended metrics for model evaluation 
+- help file now mentions Jaccard and Sorensen also as recommended metrics for model evaluation
 
 
 ============================================
@@ -764,7 +894,7 @@ fuzzySim v1.7.9 (committed 2017-03-27)
 - help file now states that corSelect is included as option in multGLM
 - added 'use = "pairwise.complete.obs"' to examples
 
-* PDF manual: 
+* PDF manual:
 - reduced several code line lengths to avoid overboard
 
 
@@ -919,10 +1049,10 @@ fuzzySim v1.6.1 (committed 2015-11-13)
 - result is now a named vector instead of a list
 - 'na.rm' now TRUE by default
 
-* fuzSim: 
+* fuzSim:
 - added argument 'na.rm = TRUE'
 
-* multGLM: 
+* multGLM:
 - bug corrected in corSelect (was reporting but not really eliminating variables)
 - suppressMessages in corSelect
 
@@ -936,7 +1066,7 @@ fuzzySim v1.6.1 (committed 2015-11-13)
 * fuzzyOverlay, fuzzyRangeChange, modOverlap:
 - examples containing 'jitter' corrected to avoid values outside the [0, 1] interval
 
-* fuzSim: 
+* fuzSim:
 - examples now provided also for similarity between fuzzy data
 - tables of significance for Jaccard and Baroni's indices now referred
 

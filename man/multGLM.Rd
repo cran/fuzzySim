@@ -7,26 +7,30 @@ GLMs with variable selection for multiple species
 This function performs selection of variables and calculates generalized linear models for a set of presence/absence records in a data frame, with a range of options for data partition, variable selection, and output form.
 }
 \usage{
-multGLM(data, sp.cols, var.cols, id.col = NULL, family = "binomial",
-test.sample = 0, FDR = FALSE, correction = "fdr", FDR.first = TRUE,
-corSelect = FALSE, cor.thresh = 0.8, cor.method = "pearson", step = TRUE,
-trace = 0, start = "null.model", direction = "both", select = "AIC",
-trim = TRUE, Y.prediction = FALSE, P.prediction = TRUE, Favourability = TRUE,
-group.preds = TRUE, TSA = FALSE, coord.cols = NULL, degree = 3, verbosity = 2,
-test.in = "Rao", test.out = "LRT", p.in = 0.05, p.out = 0.1, ...)
+multGLM(data, sp.cols, var.cols, id.col = NULL, block.cols = NULL,
+family = "binomial", test.sample = 0, FDR = FALSE, correction = "fdr",
+FDR.first = TRUE, corSelect = FALSE, coeff = TRUE,
+cor.thresh = ifelse(isTRUE(coeff), 0.8, 0.05), cor.method = "pearson",
+step = TRUE, trace = 0, start = "null.model", direction = "both",
+select = "AIC", trim = TRUE, Y.prediction = FALSE, P.prediction = TRUE,
+Favourability = TRUE, group.preds = TRUE, TSA = FALSE, coord.cols = NULL,
+degree = 3, verbosity = 2, test.in = "Rao", test.out = "LRT", p.in = 0.05,
+p.out = 0.1, ...)
 }
 \arguments{
   \item{data}{a data frame in wide format (see \code{\link{splist2presabs}}) containing, in separate columns, your species' binary (0/1) occurrence data and the predictor variables.}
   \item{sp.cols}{names or index numbers of the columns containing the species data to be modelled.}
   \item{var.cols}{names or index numbers of the columns containing the predictor variables to be used for modelling.}
   \item{id.col}{(optional) name or index number of column containing the row identifiers (if defined, it will be included in the output 'predictions' data frame).}
+  \item{block.cols}{[UNDER IMPLEMENTATION] names or index numbers of the columns containing predictor variables to force into the model, even when a selection method is applied to the remaining variables.}
   \item{family}{argument to be passed to the \code{\link{glm}} function; currently, only 'binomial' is implemented here.}
   \item{test.sample}{a subset of data to set aside for subsequent model testing. Can be a value between 0 and 1 for a proportion of the data to choose randomly (e.g. 0.2 for 20\%); or an  integer number for a particular number of cases to choose randomly among the records in 'data'; or a vector of integers for the index numbers of the particular rows to set aside; or "Huberty" for his rule of thumb based on the number of variables (Huberty 1994, Fielding & Bell 1997).}
   \item{FDR}{logical value indicating whether to do a preliminary exclusion of variables based on the false discovery rate (see \code{\link{FDR}}). The default is FALSE.}
   \item{correction}{argument to pass to the \code{\link{FDR}} function if FDR=TRUE. The default is "fdr", but see \code{\link{p.adjust}} for other options.}
   \item{FDR.first}{logical value indicating whether FDR exclusion (if FDR=TRUE) should be applied at the beginning. The default is TRUE. If set to FALSE (and if FDR=TRUE), FDR exclusion will be applied after 'corSelect' below.}
   \item{corSelect}{logical value indicating whether to select among highly correlated variables using \code{\link{corSelect}}. The default is FALSE.}
-  \item{cor.thresh}{numerical value indicating the correlation threshold to pass to \code{\link{corSelect}} (used only if corSelect=TRUE).}
+  \item{coeff}{logical value to pass to \code{\link{corSelect}} (if corSelect=TRUE) indicating whether two variables should be considered highly correlated based on the magnitude of their coefficient (rather than p-value) of correlation. The default is TRUE.}
+  \item{cor.thresh}{numerical value indicating the correlation threshold to pass to \code{\link{corSelect}} (if corSelect=TRUE).}
   \item{cor.method}{character value to pass to \code{\link{corSelect}} (if corSelect=TRUE) specifying the correlation coefficient to use. Can be "pearson" (the default), "kendall" or "spearman".}
   \item{step}{logical, whether to perform a stepwise selection of variables, using either the \code{\link{step}} function (if select = "AIC" or "BIC") or the \code{\link{stepwise}} function (if select = "p.value").}
   \item{trace}{if positive, information is printed during the stepwise selection (if step=TRUE). Larger values may give more detailed information.}
