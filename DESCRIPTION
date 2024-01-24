@@ -1,8 +1,8 @@
 Package: fuzzySim
 Type: Package
 Title: Fuzzy Similarity in Species Distributions
-Version: 4.10.5
-Date: 2023-10-04
+Version: 4.10.7
+Date: 2024-01-24
 Author: Barbosa A.M.
 Maintainer: A. Marcia Barbosa <ana.marcia.barbosa@gmail.com>
 Imports: graphics, methods, modEvA (> 3.9), stats, utils
@@ -11,11 +11,8 @@ Description: Functions to compute fuzzy versions of species occurrence patterns 
 License: GPL-3
 URL: fuzzysim.r-forge.r-project.org,
         https://CRAN.R-project.org/package=fuzzySim
-Repository: CRAN
-Repository/R-Forge/Project: fuzzysim
-Repository/R-Forge/Revision: 205
-Repository/R-Forge/DateTimeStamp: 2023-10-04 10:55:08
-Date/Publication: 2023-10-09 14:10:13 UTC
 NeedsCompilation: no
-Packaged: 2023-10-04 11:05:11 UTC; rforge
+Packaged: 2024-01-24 16:13:32 UTC; marcia
 Depends: R (>= 2.10)
+Repository: CRAN
+Date/Publication: 2024-01-24 16:30:06 UTC
