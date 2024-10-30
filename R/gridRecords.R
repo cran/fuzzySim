@@ -9,10 +9,11 @@ gridRecords <- function(rst,
 
   # version 3.8 (24 Sep 2023)
 
-  if (!("raster" %in% rownames(installed.packages())) && !("terra" %in% rownames(installed.packages()))) stop("This function requires having either the 'raster' or the 'terra' package installed.")
+  if (!("raster" %in% .packages(all.available = TRUE)) && !("terra" %in% .packages(all.available = TRUE))) stop("This function requires having either the 'raster' or the 'terra' package installed.")
 
+  sv_input <- inherits(pres.coords, "SpatVector")
 
-  if (inherits(pres.coords, "SpatVector")) {
+  if (sv_input) {
     if (isFALSE(terra::is.points(pres.coords))) stop ("If 'pres.coords' is of class 'SpatVector', its 'geomtype' must be 'points'.")
     pres.coords <- terra::crds(pres.coords)
   }
@@ -116,14 +117,24 @@ gridRecords <- function(rst,
   #result <- result[order(as.integer(rownames(result))), ]  # new
   rownames(result) <- NULL  # new
 
-  if (plot) {  # new
-    xrange <- range(result$x, na.rm = TRUE)
-    yrange <- range(result$y, na.rm = TRUE)
-    plot(result[result$presence == 0, c("x", "y")],
-         xlim = xrange, ylim = yrange,
-         pch = "-", col = "red")
-    points(result[result$presence == 1, c("x", "y")],
-           pch = "+", col = "blue")
+  if (plot) {
+    if ("terra" %in% .packages(all.available = TRUE)) {
+      result_sv <- terra::vect(result, geom = c("x", "y"), keepgeom = TRUE)  # for better-shaped plot
+      terra::plot(result_sv[result_sv$presence == 0, ],
+                  ext = terra::ext(result_sv),
+                  pch = "-", col = "red")
+      terra::points(result_sv[result_sv$presence == 1, ],
+                    pch = "+", col = "blue")
+      if (sv_input) result <- result_sv
+    } else {  # non-spatial plot
+      xrange <- range(result$x, na.rm = TRUE)
+      yrange <- range(result$y, na.rm = TRUE)
+      plot(result[result$presence == 0, c("x", "y")],
+           xlim = xrange, ylim = yrange,
+           pch = "-", col = "red")
+      points(result[result$presence == 1, c("x", "y")],
+             pch = "+", col = "blue")
+    }
   }
 
   return(result)

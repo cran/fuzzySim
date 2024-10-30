@@ -1,4 +1,183 @@
 ===============================================
+upcoming...
+===============================================
+
+* getRegion
+- new arg 'dist_mat' for efficiency when available
+
+* distPres
+- computes terra::nearest instead of pairwise distance (much more efficient and avoids crash for large datasets)
+
+
+===============================================
+fuzzySim v4.26 (committed 2024-10-29) -> CRAN
+===============================================
+
+*## Modified functions:
+
+ gridRecords
+- output is SpatVector only if input is too
+
+* selectAbsences
+- added data.frame() to fix error when input SpatVector
+
+
+===============================================
+fuzzySim v4.25 (committed 2024-10-24)
+===============================================
+
+## Modified functions:
+
+* selectAbsences
+- 'bias' can now be a raster layer
+
+* modelTrim
+- implement categorical variables in phylolm models
+
+
+===============================================
+fuzzySim v4.24 (committed 2024-10-03)
+===============================================
+
+## Modified functions:
+
+* fuzSim, simMat, fuzzyOverlay, modOverlap, fuzzyRangeChange
+- inputs can be SpatRaster
+
+* simMat
+- added 'plot' argument
+
+
+## Other modified files:
+
+* fuzzyOverlay.Rd
+- 'op' argument itemized list of options
+
+* NAMESPACE
+- removed import of utils::installed.packages() [now using .packages(all.available = TRUE) instead]
+
+
+===============================================
+fuzzySim v4.23 (committed 2024-09-27)
+===============================================
+
+## Modified functions:
+
+* getRegion
+- labels now appear for all clusters in plot
+
+* gridRecords, selectAbsences
+- output plot SpatVector when 'terra' available
+
+
+===============================================
+fuzzySim v4.22 (committed 2024-09-26)
+===============================================
+
+## Modified functions:
+
+* getRegion
+- hclust() now with method = "single"
+- cutree() with h = clust_dist (new argument)
+- fixed bug in 'weight', which wasn't correctly ordered (replaced merge with match)
+- 'weight' argument now also applies to type="width"
+
+
+===============================================
+fuzzySim v4.21 (committed 2024-09-25)
+===============================================
+
+## Modified functions:
+
+* distPres, selectAbsences
+- add 'CRS' argument; if provided, terra::distance() is used
+
+* distPres
+- add 'verbosity' argument
+
+* getRegion
+- fix plotting error, now specifying 'terra::' before plot() and text()
+
+
+===============================================
+fuzzySim v4.20 (committed 2024-09-24)
+===============================================
+
+## New functions:
+
+* getRegion
+
+
+===============================================
+fuzzySim v4.13 (committed 2024-09-17)
+===============================================
+
+## Modified functions:
+
+* modelTrim
+- implemented for 'phylolm' models
+- added 'phy' and 'verbosity' arguments
+- changed 'if (class(model) %in% c("glm", "lm"))' to 'if (all(class(model) %in% c("glm", "lm")))', otherwise CRAN check error
+
+
+## Other modified files:
+
+* DESCRIPTION
+- added contributors
+
+
+===============================================
+fuzzySim v4.12 (committed 2024-06-03)
+===============================================
+
+## New functions:
+
+* dms2dec
+
+
+===============================================
+fuzzySim v4.11.1 (committed 2024-03-07)
+===============================================
+
+## Modified functions:
+
+* FDR, multGLM, corSelect
+- added argument 'test' (default "Chisq" for back-compatibility; future default probably "Rao" score as in SPSS)
+
+* stepByStep
+- message and NA outputs if model has no variables
+
+
+===============================================
+fuzzySim v4.11 (committed 2024-03-06)
+===============================================
+
+## Modified functions:
+
+* stepByStep
+- added option select="p.value" and associated arguments
+
+
+# Other modified files:
+
+* stepwise.Rd
+- changed 'sp.col' in Examples, for a model where a variable is included and then dropped
+
+
+===============================================
+fuzzySim v4.10.8 (committed 2024-03-05)
+===============================================
+
+## Modified functions:
+
+* appendData
+- 'data1' and 'data2' coerced to data.frame (to work e.g. for SpatVectors)
+
+* stepByStep
+- 'data' can now be a 'glm' model object, from which the order of the variables will be taken
+
+
+===============================================
 fuzzySim v4.10.7 (committed 2024-01-24) -> CRAN
 ===============================================
 

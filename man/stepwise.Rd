@@ -7,8 +7,8 @@ Stepwise regression
 This function runs a stepwise regression, selecting and/or excluding variables based on the significance (p-value) of the statistical tests implemented in the \code{\link{add1}} and \code{\link{drop1}} functions of R.
 }
 \usage{
-stepwise(data, sp.col, var.cols, id.col = NULL, family = binomial(link="logit"), 
-direction = "both", test.in = "Rao", test.out = "LRT", p.in = 0.05, p.out = 0.1, 
+stepwise(data, sp.col, var.cols, id.col = NULL, family = binomial(link="logit"),
+direction = "both", test.in = "Rao", test.out = "LRT", p.in = 0.05, p.out = 0.1,
 trace = 1, simplif = TRUE, preds = FALSE, Favourability = FALSE, Wald = FALSE)
 }
 \arguments{
@@ -59,7 +59,7 @@ logical, whether to print the Wald test statistics using \code{\link{summaryWald
 }
 }
 \details{
-Stepwise variable selection is a way of selecting a subset of significant variables to get a simple and easily interpretable model. It is more computationally efficient than best subset selection. This function uses the R functions \code{\link{add1}} for selecting and \code{\link{drop1}} for excluding variables. The default parameters mimic the "Forward Selection (Conditional)" stepwise procedure implemented in the IBM SPSS software. This is a widely used (e.g. Munoz et al. 2005, Olivero et al. 2017, 2020, Garcia-Carrasco et al. 2021) but also widely criticized method for variable selection (e.g. Harrell 2001; Whittingham et al. 2006; Flom & Cassell, 2007; Smith 2018), though its AIC-based counterpart (implemented in the \code{\link{step}} R function) is also not without flaws (e.g. Murtaugh 2014; Coelho et al. 2019).
+Stepwise variable selection is a way of selecting a subset of significant variables to get a simple and easily interpretable model. It is more computationally efficient than best subset selection. This function uses the R functions \code{\link{add1}} for selecting and \code{\link{drop1}} for excluding variables. The default parameters mimic the "Forward Selection (Conditional)" stepwise procedure implemented in the IBM SPSS software. This is a widely used (e.g. Munoz et al. 2005, Olivero et al. 2017, 2020, Garcia-Carrasco et al. 2021) but also widely criticized (e.g. Harrell 2001; Whittingham et al. 2006; Flom & Cassell, 2007; Smith 2018) method for variable selection, though its AIC-based counterpart (implemented in the \code{\link{step}} R function) is equally flawed (e.g. Murtaugh 2014; Coelho et al. 2019).
 }
 \value{
 If simplif=TRUE (the default), this function returns the model object obtained after the variable selection procedure. If simplif=FALSE, it returns a list with the following components:
@@ -97,5 +97,8 @@ A. Marcia Barbosa
 \examples{
 data(rotif.env)
 
-stepwise(data = rotif.env, sp.col = 18, var.cols = 5:17)
+stepwise(data = rotif.env, sp.col = 21, var.cols = 5:17)
+
+sw <- stepwise(data = rotif.env, sp.col = 21, var.cols = 5:17, simplif = FALSE)
+sw
 }

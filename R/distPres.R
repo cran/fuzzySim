@@ -1,5 +1,5 @@
-distPres <- function(data, sp.cols, coord.cols = NULL, id.col = NULL, dist.mat = NULL, method = "euclidean", suffix = "_D", p = 1, inv = TRUE) {
-  # version 2.3 (9 Nov 2023)
+distPres <- function(data, sp.cols, coord.cols = NULL, id.col = NULL, dist.mat = NULL, CRS = NULL, method = "euclidean", suffix = "_D", p = 1, inv = TRUE, verbosity = 2) {
+  # version 2.4 (25 Sep 2024)
 
   data <- as.data.frame(data)
   stopifnot(
@@ -14,7 +14,40 @@ distPres <- function(data, sp.cols, coord.cols = NULL, id.col = NULL, dist.mat =
     is.null(dist.mat) | nrow(dist.mat) == nrow(data)
   )
 
-  if (is.null(dist.mat)) dist.mat <- dist(data[ , coord.cols], method = method)
+  if (is.null(dist.mat)) {
+
+    trr <- "terra" %in% .packages(all.available = TRUE)
+    if (verbosity > 0 && isFALSE(trr)) message("NOTE: without the 'terra' package installed,\n distance is both slower and less accurate.")
+
+    if (is.null(CRS)) {
+      if (verbosity > 0) warning("Distances may be inaccurate when CRS is not provided.")
+      CRS <- "local"  # arbitrary Cartesian space
+    }
+
+    if (!is.null(CRS) && isTRUE(trr)) {
+      # if (verbosity > 1) message("Computing pairwise distances...")
+
+      # ll <- terra::is.lonlat(v, perhaps = TRUE, warn = TRUE)
+      # dist.mat <- terra::distance(data[ , coord.cols], lonlat = ll)
+
+      v <- terra::vect(as.matrix(data[ , coord.cols]), crs = CRS)
+      dist.mat <- terra::distance(v)
+
+      # if (verbosity > 1) message("Computing nearest distances...")
+      # crd_names <- if (is.character(coord.cols)) coord.cols else colnames(data)[coord.cols]
+      # p <- data[ , sp.cols] == 1
+      # a <- data[ , sp.cols] == 0
+      # pres_pts <- terra::vect(as.matrix(data[p, ]), geom = crd_names, crs = CRS)
+      # abs_pts <- terra::vect(as.matrix(data[a, ]), geom = crd_names, crs = CRS)
+      # nearest_pres <- terra::nearest(abs_pts, pres_pts)
+      # data[p, "distpres"] <- 0
+      # data[a, "distpres"] <- nearest_pres$distance
+
+    } else {
+      if (verbosity > 0) message("NOTE: with 'CRS' not provided or 'terra' package not installed,\n distances don't consider the curvature of the Earth")
+      dist.mat <- stats::dist(data[ , coord.cols], method = method)
+    }
+  }
 
   dist.mat <- as.matrix(dist.mat)
   sp.data <- data[ , sp.cols, drop = FALSE]
