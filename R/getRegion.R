@@ -1,44 +1,25 @@
-#' Get region
-#'
-#' @description
-#' This function suggests a region for building an ecological niche model around a given set of species occurrence point coordinates. Mind that this region does not consider survey effort, geographical barriers or other factors that should also be taken into account when delimiting a region for modelling.
-
-#' @param pres.coords [SpatVector] points with the species occurrences
-#' @param type character indicating which procedure to use for defining the region. Options are:
-#' - "width": a buffer whose radius is the minimum diameter of the 'pres.coords' spatial extent (computed with [terra::width()]), multiplied by 'width_mult';
-#' - "mean_dist": a buffer whose radius is the mean pairwise [terra::distance()] among 'pres.coords', multiplied by 'dist_mult';
-#' - "inv_dist": a buffer whose radius is the sum of the distance form each point to all other 'pres.coords';
-#' - "clust_mean_dist": a different buffer around each cluster of 'pres.coords' (computed with [stats::hclust()]) and then [stats::cutree()], with the mean point distance as the 'h' parameter), sized according to the mean pairwise distance of each cluster's 'pres.coords'.
-#'  - "clust_width": a different buffer around each cluster of 'pres.coords' (computed with [stats::hclust()]) and then [stats::cutree()], with the mean point distance as the 'h' parameter), sized according to the [terra::width()] of each cluster's 'pres.coords'.
-#' @param width_mult if type = "width" or "clust_width", multiplier of the width to use for the [terra::buffer()] radius. Default 0.5.
-#' @param dist_mult if type = "mean_dist" or "clust_mean_dist", multiplier of the mean pairwise point distance to use for the [terra::buffer()] radius around each cluster. Default 1.
-#' @param dist_mat optional matrix of pairwise distances among 'pres.coords, to reuse (if 'type' includes "dist" or "clust") for efficiency instead of computing a new one. Should normally be computed with [terra::distance()] or another function that takes the Earth's curvature into account.
-#' @param verbosity integer indicating the amount of messages to display. The default is 2, for all available messages.
-#' @param plot logical (default TRUE) indicating whether to plot the resulting region around 'pres.coords'
-#'
-#' @return SpatVector polygon
-#' @author A. Marcia Barbosa
-#' @seealso [terra::buffer()], [terra::width()]
-
-#' @importFrom terra aggregate buffer crs distance is.lonlat is.points set.crs vect width
-#' @importFrom stats cutree hclust
-#' @export
-#'
-#' @examples
-
 getRegion <- function(pres.coords,
                       type = "width",
+                      clust_type = "buffer",
                       clust_dist = 100,
                       dist_mult = 1,
                       width_mult = 0.5,
                       weight = FALSE,
                       CRS = NULL,
                       dist_mat = NULL,
+                      dist_method = "auto",
                       verbosity = 2,
-                      plot = TRUE)
+                      plot = TRUE,
+                      ...)
 {
 
+  # version 1.3 (7 Sep 2025)
+
+  if (!("terra" %in% .packages(all.available = TRUE))) stop("This function requires the 'terra' package.\nPlease install it first.")
+
   if (!(type %in% c("width", "mean_dist", "inv_dist", "clust_mean_dist", "clust_width"))) stop("Invalid 'type'. See help file for options.")
+
+  clust_type <- match.arg(clust_type, c("buffer", "hclust"))
 
   stopifnot(dist_mult > 0,
             width_mult > 0,
@@ -52,6 +33,8 @@ getRegion <- function(pres.coords,
     pres.coords <- terra::vect(pres.coords, geom = colnames(pres.coords))
   }
 
+  if (nrow(pres.coords) > nrow(unique(terra::values(pres.coords))))
+    message("NOTE: Duplicate coordinates found. Clean dataset beforehand?\n")
 
   if (inherits(pres.coords, "SpatVector")) {
 
@@ -62,7 +45,7 @@ getRegion <- function(pres.coords,
       if (terra::crs(pres.coords) == "") {
         terra::set.crs(pres.coords, CRS)
       } else {
-        message("'CRS' argument ignored, as 'pres.coords' already has one.")
+        message("'CRS' argument ignored, as 'pres.coords' already has one.\n")
       }
     }
 
@@ -77,52 +60,94 @@ getRegion <- function(pres.coords,
 
   }  # end if SpatVector
 
+  nrow_in <- nrow(pres.coords)
+  pres.coords <- pres.coords[complete.cases(terra::crds(pres.coords)), ]
+  nrow_out <- nrow(pres.coords)
+  if (verbosity > 0 && nrow_out < nrow_in) message(nrow_in, " input rows; ", nrow_in - nrow_out, " excluded due to missing coordinates; ", nrow_out, " rows used.\n")
 
-  if (grepl("dist|clust", type)) {
+  # if (grepl("dist|clust", type)) {
+  # length(grep("_dist", type)) > 0   #
+  # type %in% c("mean_dist", "inv_dist")  <- should be this one, but wrong result if no CRS
+  if (length(grep("_dist", type)) > 0 || clust_type == "hclust") {
     if (is.null(dist_mat)) {
       if (verbosity > 0) message("Computing pairwise distance between points...")
-      dist_mat <- terra::distance(pres.coords)
+
+      # if (!terra::is.lonlat(pres.coords)) pres.coords <- terra::project(pres.coords, "EPSG:4326")
+
+      # dist_mat <- geodist::geodist(terra::crds(pres.coords), measure = dist_measure)
+      # dist_mat <- terra::distance(pres.coords)
+      dist_mat <- distMat(pres.coords, CRS = terra::crs(pres.coords), dist_method = dist_method, verbosity = verbosity)  # 'pres.coords' somehow gets a CRS assigned here...
+
     } else {
       if (verbosity > 0) message("Using supplied pairwise distance between points...")
     }
+
+    diag(dist_mat) <- dist_mat[lower.tri(dist_mat)] <- NA  # new
+
     dist_mean <- mean(dist_mat, na.rm = TRUE)
-  }
+  }  # end if dist
+
 
   if (grepl("clust", type)) {
+    dist_method <- "haversine"  # otherwise "auto" may use different methods for each cluster
+
     if (verbosity > 1) message("Computing point clusters...")
 
-    # nrby <- nearby(pres.coords, k = 1)
-    # nearest_dist <- distance(pres.coords[nrby[ , 1], ], pres.coords[nrby[ , 2], ], pairwise = TRUE)
+    if (clust_type == "hclust") {
+      # nrby <- nearby(pres.coords, k = 1)
+      # nearest_dist <- distance(pres.coords[nrby[ , 1], ], pres.coords[nrby[ , 2], ], pairwise = TRUE)
 
-    tree <- stats::hclust(d = dist_mat, method = "single")
-    pres.coords$clust <- stats::cutree(tree, h = clust_dist * 1000)
+      tree <- stats::hclust(d = stats::as.dist(dist_mat), method = "single")
+      pres.coords$clust <- stats::cutree(tree, h = clust_dist * 1000)  # km to meters
+    }
+
+    if (clust_type == "buffer") {
+      buffers <- terra::buffer(pres.coords, width = clust_dist * 1000)  # km to meters
+      # clust_polygons <- terra::convHull(pres.coords, by = "clust")
+      # buff_radius <- sqrt(terra::expanse(clust_polygons))
+      groups <- terra::disagg(terra::aggregate(buffers))
+      groups$id <- 1:nrow(groups)
+      pres.coords$clust <- terra::extract(groups, pres.coords)$id
+    }
+
+    # if (verbosity > 1) message("- got ", length(clusters), " clusters")
+
     # clust_polygons <- terra::convHull(pres.coords, by = "clust")
     # buff_radius <- sqrt(terra::expanse(clust_polygons))
     clusters <- unique(pres.coords$clust)
     # if (verbosity > 1) message("- got ", length(clusters), " clusters")
-  }
+  }  # end if clust
 
 
   if (type == "mean_dist") {
     reg <- terra::buffer(pres.coords, width = dist_mean * dist_mult)
-  }
+  }  # end if mean_dist
 
   else if (type == "inv_dist") {
-    dist_df <- as.data.frame(as.matrix(dist_mat))
+    # dist_df <- as.data.frame(as.matrix(dist_mat))
     dist_sums <- sapply(dist_mat, sum, na.rm = TRUE)  # sum of distances from each point to all other points
     range01 <- function(x){(x-min(x))/(max(x)-min(x))}
     dist_sums_01 <- range01(dist_sums)
     dist_sums_01[dist_sums_01 == 0] <- 0.001  # otherwise buffer() error
     reg <- terra::buffer(pres.coords, width = dist_mean * rev(dist_sums_01) * dist_mult)
-  }
+  }  # end if inv_dist
 
   else if (type == "clust_mean_dist") {
     if (verbosity > 0) message("Computing pairwise distance within clusters...")  # before loop to avoid message repetitions
     for (i in clusters) {
       # if (verbosity > 1) cat(i, "")
       clust_pts <- pres.coords[pres.coords$clust == i, ]
-      buff_radius <- mean(terra::distance(clust_pts)) * dist_mult
-      if (!is.finite(buff_radius) || buff_radius <= 0) buff_radius <- 0.001  # clusters with only one point get no distance, and a zero-width buffer cannot be computed for points
+      # buff_radius <- mean(terra::distance(clust_pts)) * dist_mult
+      # buff_radius <- mean(geodist::geodist(terra::crds(clust_pts), measure = dist_measure)) * dist_mult
+      # buff_radius <- mean(distMat(clust_pts, CRS = terra::crs(pres.coords), dist_method = dist_method, verbosity = 0), na.rm = TRUE) * dist_mult
+
+      # buff_radius <- mean(terra::distance(clust_pts)) * dist_mult
+
+      dist_mat_clust <- distMat(clust_pts, CRS = terra::crs(pres.coords), dist_method = dist_method, verbosity = verbosity)
+      if (nrow(dist_mat_clust) > 1)  diag(dist_mat_clust) <- dist_mat_clust[lower.tri(dist_mat_clust)] <- NA  # new
+      buff_radius <- mean(dist_mat_clust, na.rm = TRUE) * dist_mult
+
+      if (!is.finite(buff_radius) || buff_radius <= 0) buff_radius <- 0.001  # because clusters with only one point get no distance, and a zero-width buffer cannot be computed for points
       pres.coords[pres.coords$clust == i, "buff_radius"] <- buff_radius
     }
 
@@ -144,7 +169,7 @@ getRegion <- function(pres.coords,
     # }
     # reg <- terra::aggregate(do.call(rbind, buffs))
 
-    reg <- terra::buffer(pres.coords, width = "buff_radius")
+    reg <- terra::buffer(pres.coords, width = "buff_radius")  # uses column value
   }
 
   else if (type == "clust_width") {
@@ -164,7 +189,7 @@ getRegion <- function(pres.coords,
       pres.coords$clust_width <- pres.coords$clust_width * clust_abund
     }
 
-    reg <- terra::buffer(pres.coords, width = "clust_width")
+    reg <- terra::buffer(pres.coords, width = "clust_width")  # uses column value
   }
 
   else if (type == "width") {
@@ -181,7 +206,8 @@ getRegion <- function(pres.coords,
 
   if (plot) {
     terra::plot(reg, col = "yellow", border = NA,
-                main = paste("type =", type))
+                # main = paste("type =", type),
+                ...)
 
     if (!grepl("clust", type)) {
       terra::plot(pres.coords, cex = 0.3, add = TRUE)

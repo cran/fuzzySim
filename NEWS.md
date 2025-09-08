@@ -1,3 +1,51 @@
+# Version 4.34
+### (Committed 2025-09-07)
+
+### New functions:
+
+* distMat
+    - now used by distPres() and getRegion()
+
+
+### Modified functions:
+
+* getRegion
+    - new arguments 'clust_type', 'dist_method', and '...' for plot()
+    - distance now computed with distMat(), with several method options and "auto" default
+    - diagonal and lower triangle now removed before computing the mean of the distance matrix
+    - rows with no coordinates removed (with message) to prevent error
+    - message if duplicate coordinates found
+
+* distPres
+    - distance now computed with distMat()
+
+* multTSA
+    - now implemented also for SpatRaster + presence coordinates
+
+* multConvert
+    - now implemented also for SpatRasters
+    - removed loop
+
+* fuzzyRangeChange
+    - 'plot.type' default changed to new option "waterfall" (same as "barplot"), which seems the most appropriate for this
+
+* gridRecords
+    - some code changes to improve efficiency
+
+
+### Other modified files:
+
+* multConvert.Rd
+    - mentions and examples for scale() and log() continuous variables
+
+* multicol.Rd, multConvert.Rd
+    - mention implementation also for SpatRasters
+
+* gridRecords.Rd
+    - example for gridding in tiles when 'rst' is large
+
+
+
 # Version 4.33 
 ### (Committed 2025-03-21) -> CRAN
 
@@ -60,7 +108,7 @@
 
 ### New functions:
 
-* partialResp
+* partialResp, which can be used also for favourability (suggested by Alba Estrada)
 
 
 
