@@ -5,8 +5,8 @@
 getRegion(
   pres.coords,
   type = "width",
-  clust_type = "buffer",
   clust_dist = 100,
+  clust_type = "buffer",
   dist_mult = 1,
   width_mult = 0.5,
   weight = FALSE,
@@ -22,22 +22,27 @@ getRegion(
 \item{pres.coords}{a SpatVector of points, or an object inheriting class 'data.frame' with 2 columns containing, respectively, the x and y, or longitude and latitude coordinates (in this order!) of the points where species presence was recorded.
 }
 \item{type}{character indicating which procedure to use for defining the region around 'pres.coords'. Options are:
-\itemize{
-\item "width": a buffer whose radius is the minimum diameter of the 'pres.coords' spatial extent (computed with \code{\link[terra:width]{terra::width()}}), multiplied by 'width_mult';
-\item "mean_dist": a buffer whose radius is the mean pairwise \code{\link[terra:distance]{terra::distance()}} among 'pres.coords', multiplied by 'dist_mult';
-\item "inv_dist": a buffer whose radius is inversely proportional to the sum of the distances from each point to all other points in 'pres.coords' (a rough measure of how isolated each point is, possibly indicating an opportunistic record in a sparsely surveyed area);
-\item "clust_mean_dist": a different buffer around each cluster of 'pres.coords' (clusters computed with \code{\link[stats:hclust]{stats::hclust()}}, method = "simple") and then \code{\link[stats:cutree]{stats::cutree()}} with h = clust_dist*1000), sized according to the mean pairwise distance of each cluster's 'pres.coords'.
-\item "clust_width": a different buffer around each cluster of 'pres.coords' (clusters computed as described for 'clust_mean_dist'), sized according to the \code{\link[terra:width]{terra::width()}} of each cluster's 'pres.coords'.
+  \itemize{
+    \item "width": a buffer whose radius is the minimum diameter of the 'pres.coords' spatial extent (computed with \code{\link[terra:width]{terra::width()}}), multiplied by 'width_mult';
+    \item "mean_dist": a buffer whose radius is the mean pairwise \code{\link[terra:distance]{terra::distance()}} among 'pres.coords', multiplied by 'dist_mult';
+    \item "inv_dist": a buffer whose radius is inversely proportional to the sum of the distances from each point to all other points in 'pres.coords' (a rough measure of how isolated each point is, possibly indicating an opportunistic record in a sparsely surveyed area);
+    \item "clust_mean_dist": a different buffer around each cluster of 'pres.coords' (clusters computed as described in 'clust_type'), sized according to the mean pairwise distance between the points in that cluster.
+    \item "clust_width": a different buffer around each cluster of 'pres.coords' (clusters computed as described in 'clust_type'), sized according to the \code{\link[terra:width]{terra::width()}} of that cluster.
+  }
 }
-}
-\item{clust_type}{if 'type' involves clusters, character value specifying the method to compute them. Can be "\code{\link[terra:buffer]{buffer}}" (now the default, more recently implemented) or "\code{\link[stats]{hclust}}" based on pairwise point distances (backward-compatible, but less accurate, and much more computationally intensive if 'dist_mat' is not provided).}
 \item{clust_dist}{if 'type' involves clusters, numeric value specifying the distance threshold (in km) within which points are clustered together. Default 100.}
+\item{clust_type}{if 'type' involves clusters, character value specifying the method to compute them. Options are:
+  \itemize{
+    \item "buffer" (now the default, more recently implemented), for aggregated \code{\link[terra:buffer]{buffer}}s of width = 'clust_dist';
+    \item  "hclust", for clusters computed with \code{\link[stats:hclust]{stats::hclust()}}, method = "simple") and then \code{\link[stats:cutree]{stats::cutree()}} with h = clust_dist*1000 (backward-compatible, but less accurate, and much more computationally intensive if 'dist_mat' is not provided).
+    }
+}
 \item{dist_mult}{if 'type' involves distance, multiplier of the mean pairwise point distance to use for the \code{\link[terra:buffer]{terra::buffer()}} radius around each cluster. Default 1.}
 \item{width_mult}{if 'type' involves width, multiplier of the width to use for the \code{\link[terra:buffer]{terra::buffer()}} radius. Default 0.5.}
 \item{weight}{logical (used only if 'type' includes clusters) indicating whether to weigh the radius of the buffer around each cluster proportionally to the number of points that it includes. Default FALSE; if set to TRUE, clusters with fewer points (possibly indicating more sparsely surveyed areas) get proportionally smaller buffers than the mean distances among them.}
 \item{CRS}{coordinate reference system of 'pres.coords' (if it is not a SpatVector with a defined CRS already), in one of the following formats: WKT/WKT2, <authority>:<code>, or PROJ-string notation (see \code{\link[terra:crs]{terra::crs()}}).}
 \item{dist_mat}{optional matrix of pairwise distances among 'pres.coords', to use (if 'type' or 'clust_type' implies computing distances) for efficiency instead of computing a new one. Should normally be computed with \code{\link[terra:distance]{terra::distance()}}, \code{\link[geodist:geodist]{geodist::geodist()}}, or another method that takes the Earth's curvature into account. If not provided, will be computed with \code{\link{distMat}}.}
-\item{dist_method}{argument to pass to [distMat()] (if 'dist_mat' is NULL) specifying the method for distance calculation. The default is "auto"; or "haversine" if 'type' includes the string "clust", to avoid different clusters generating a different automatic method selection.}
+\item{dist_method}{argument to pass to \code{\link{distMat}} (if 'dist_mat' is NULL) specifying the method for distance calculation. The default is "auto"; or "haversine" if 'type' is "clust_mean_dist", to avoid different clusters getting a different automatic method.}
 \item{verbosity}{integer indicating the amount of messages to display along the process. The default is 2, for all available messages.}
 \item{plot}{logical (default TRUE) indicating whether to plot the resulting region (in yelow), together with the input 'pres.coords' (black points, or points coloured according to their cluster) and a label with the number of points in each cluster (if 'type' involves clusters).}
 \item{\dots}{(if plot=TRUE) additional arguments to pass to \code{\link[terra:plot]{terra::plot()}}.}

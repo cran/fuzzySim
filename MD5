@@ -1,6 +1,6 @@
-bc79e622670da4a26c7053ec073f1825 *DESCRIPTION
+b9c4684c77dfebc6232518b66c43fcc3 *DESCRIPTION
 84a13348d35f92df9bd29b62c774b5a9 *NAMESPACE
-dab1e10c463308c47586e3e97382e10f *NEWS.md
+502e5e6b4c5d631e01feb97ac660f9c8 *NEWS.md
 fe6de5e7166e10452370f0ca35df549f *R/FDR.R
 a9943faecc863862e787f3226c781400 *R/Fav.R
 81f058c8de512395e67b6dafbaffdb3e *R/appendData.R
@@ -16,10 +16,10 @@ c01c4ad7383e91b80702185ac88e732a *R/corSelect.R
 5034b17768db9c1f22673e168b2cc8f0 *R/fuzSim.R
 988adca097496a5a67897fa97c12ccd2 *R/fuzzyConsensus.R
 c8f41b1736915e83132d6fd69843e941 *R/fuzzyOverlay.R
-b93f9613ede0c7798202152cf871a13c *R/fuzzyRangeChange.R
+d0b5613ab5ca5b6f45d9c8ddab6c5d4b *R/fuzzyRangeChange.R
 e0596c4d15d7d8b325f3044e9fe5159b *R/getPreds.R
-3ccefd315ff09618bb2a828bfde64576 *R/getRegion.R
-5c11a4610e98ead5533b5937c013efbf *R/gridRecords.R
+5618e73223cc0300b88dc83e49c141ac *R/getRegion.R
+b90de994b7d10f28cc771712caeee1c5 *R/gridRecords.R
 c3c553ce1b7229e47496087d8bdca355 *R/integerCols.R
 53cb3b070d8a95baef106ed8084601bd *R/modOverlap.R
 7233599bfaf6fe4901954b0c4a2dd3b1 *R/modelTrim.R
@@ -65,9 +65,9 @@ ba3faa45ea146270ba5be8e217cc7130 *man/entropy.Rd
 146eaeedfe4652a703ca858699fe8926 *man/fuzzyConsensus.Rd
 0b33c4a5c35925a075866ff33e880bef *man/fuzzyOverlay.Rd
 ad0b8cbc96a17532d52094694748854d *man/fuzzyRangeChange.Rd
-57b3199a55ee7a339d3c1f07e57d17a4 *man/fuzzySim-package.Rd
+81db05a56d4fdf1619ae3a04ac44a04f *man/fuzzySim-package.Rd
 3a6c8afd5c2703c2a91ac51c93093b56 *man/getPreds.Rd
-c7b7a0bc3b53bc73fa8c79c27290be09 *man/getRegion.Rd
+c579e3674b6cbee8895d18910af225b2 *man/getRegion.Rd
 62c2fa94dc14949bb01ea8f4f761f792 *man/gridRecords.Rd
 f13372970360b69f273028322d77db6e *man/integerCols.Rd
 e0b53ffdbc3f31d1f3df402382778ba5 *man/modOverlap.Rd
