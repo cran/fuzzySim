@@ -1,3 +1,39 @@
+# Version 4.38 -> CRAN
+#### (Committed 2025-10-13)
+
+### Modified functions:
+
+* getRegion
+    - in all cases (e.g. also for type='clust_width'), CRS assumed EPSG:4326 if perhaps is.lonlat()
+    - with type="clust_mean_dist", compute distances only within clusters (each less computer-intensive) rather than in the entire dist_mat
+    
+* timer
+    - fixed new bug that made input expression be evaluated twice
+    - 'start.time' named argument replaced with '...' to work correctly on both POSIXct timestamps and expressions
+
+
+### Other modified files:
+
+* fuzzyRangeChange.Rd
+    - simplified some argument descriptions
+
+
+# Version 4.37
+#### (Committed 2025-10-03)
+
+### Modified functions:
+
+* timer
+    - input can now be an expression
+
+* cleanCoords
+    - reduced blue point size, so that red (removed) points are visible underneath
+    - added transparency to both point colours, to make point overlap visible
+
+* getRegion
+    - improved message about duplicate coordinates
+
+
 # Version 4.36 -> CRAN
 #### (Committed 2025-09-26)
 
