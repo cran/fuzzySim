@@ -12,8 +12,8 @@ Functions to compute fuzzy versions of species occurrence patterns based on pres
 \tabular{ll}{
 Package: \tab fuzzySim\cr
 Type: \tab Package\cr
-Version: \tab 4.38\cr
-Date: \tab 2025-10-13\cr
+Version: \tab 4.46\cr
+Date: \tab 2026-01-05\cr
 License: \tab GPL-3\cr
 }
 }
@@ -60,6 +60,7 @@ coord.cols = c("Longitude", "Latitude"), id.col = 1)
 
 head(rotifers.tsa)
 
+\dontrun{
 
 # get inverse squared distance to presence for each species:
 
@@ -110,4 +111,5 @@ head(rot.fuz.reg)
 reg.fuz.sim.mat <- simMat(rot.fuz.reg[ , 1:10], method = "Jaccard")
 
 head(reg.fuz.sim.mat)
+}
 }

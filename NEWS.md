@@ -1,3 +1,118 @@
+# Version 4.46
+#### (Committed 2026-01-05)
+
+### Modified functions:
+
+* cleanCoords
+    - 'rm.zero' now executed before 'rm.equal'
+    - reordered some arguments
+    
+* distMat
+    - argument 'dist_method' renamed to 'method'
+
+* distPres, getRegion
+    - import modEvA::range01() instead of re-defining it
+    
+
+### Other modified files:
+
+* distPres.Rd, distMat.Rd, getRegion.Rd
+    - updated to reflect CRS assumption
+    
+
+# Version 4.45
+#### (Committed 2025-12-31)
+
+### Modified functions:
+
+* getRegion
+    - add 'prj' argument
+
+
+# Version 4.44
+#### (Committed 2025-12-30)
+
+### Modified functions:
+
+* getRegion
+    - revert conversion of dist_mat upper triangle to NA (bug for type="inv_dist")
+    - for type="inv_dist", replace sapply() with rowSums() for much improved efficiency
+    - add 'col_reg' argument and change default polygon colour to gold
+
+
+# Version 4.43
+#### (Committed 2025-12-26)
+
+### Modified functions:
+
+* getRegion
+    - check if CRS indeed empty before assigning EPSG:4326
+
+
+### Other modified files:
+
+* DESCRIPTION
+    - add BugReports field
+    
+
+# Version 4.42.2
+#### (Committed 2025-12-19)
+
+### Other modified files:
+
+* distMat.Rd, distPres.Rd, fuzzySim-package.Rd, selectAbsences.Rd, simMat.Rd
+    - 'dontrun' for examples that require setting CRS, to avoid check error on Windows old release
+
+
+# Version 4.42.1
+#### (Committed 2025-12-18)
+
+### Modified functions:
+
+* distMat
+    - Sys.setenv("PROJ_LIB") to avoid check error on Windows old release (didn't work)
+
+
+# Version 4.42
+#### (Committed 2025-12-11)
+
+### Modified functions:
+
+* corSelect
+    - new default 'cor' (more universal) for 'select' argument
+
+
+# Version 4.41
+#### (Committed 2025-12-10)
+
+### Modified functions:
+
+* multicol
+    - new arguments 'vif.thresh', 'verbosity', 'plot', '...'
+    - can perform backward stepwise removal of variables based on VIF
+
+
+# Version 4.40
+#### (Committed 2025-12-08)
+
+### Modified functions:
+
+* getRegion
+    - use input 'dist_mat' also if clusters
+
+* corSelect
+    - add condition verbosity > 0 before most messages
+
+
+# Version 4.39
+#### (Committed 2025-10-24)
+
+### Modified functions:
+
+* cleanCoords
+    - removed recently added transparency ('alpha') to point colours, which was not applicable to non-spatial inputs and slowed down the function for spatial inputs
+
+
 # Version 4.38 -> CRAN
 #### (Committed 2025-10-13)
 
