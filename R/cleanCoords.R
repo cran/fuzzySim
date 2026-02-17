@@ -1,5 +1,5 @@
 cleanCoords <- function(data, coord.cols = NULL, uncert.col = NULL, abs.col = NULL, year.col = NULL, rm.dup = !is.null(coord.cols), rm.missing.any = !is.null(coord.cols), rm.missing.both = !is.null(coord.cols), rm.zero.any = !is.null(coord.cols), rm.zero.both = !is.null(coord.cols), rm.equal = !is.null(coord.cols), rm.imposs = !is.null(coord.cols), rm.imprec.any = !is.null(coord.cols), rm.imprec.both = !is.null(coord.cols), imprec.digits = 0, rm.uncert = !is.null(uncert.col), uncert.limit = 50000, uncert.na.pass = TRUE, rm.abs = !is.null(abs.col), year.min = NULL, year.na.pass = TRUE, plot = TRUE, extend = 0.1) {
-  # version 1.8 (2 Jan 2026)
+  # version 1.9 (20 Jan 2026)
 
   stopifnot(
     inherits(data, "data.frame") || inherits(data, "SpatVector"),
@@ -107,12 +107,12 @@ cleanCoords <- function(data, coord.cols = NULL, uncert.col = NULL, abs.col = NU
 
   if (rm.abs && !is.null(abs.col) && nrow(data) > 0) {
     value <- tolower(as.character(data[ , abs.col]))
-    pres <- value != "absent" & value != "ausente"
+    pres <- is.na(value) | (value != "absent" & value != "ausente")
     data <- data[sapply(pres, isTRUE), ]
     message(nrow(data), " rows after 'rm.abs'")
   }
 
-  if (is.finite(year.min) && !is.null(year.col) && nrow(data) > 0) {
+  if (!is.null(year.min) && is.finite(year.min) && !is.null(year.col) && nrow(data) > 0) {
     year_ok <- data[ , year.col] >= year.min
     # if (year.na.pass) year_ok[is.na(data[ , year.col])] <- TRUE
     # else year_ok[is.na(data[ , year.col])] <- FALSE

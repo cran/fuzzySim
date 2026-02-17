@@ -1,4 +1,29 @@
-# Version 4.46
+# Version 4.48 -> CRAN
+#### (Committed 2026-02-16)
+
+### Modified functions:
+
+* getRegion
+    - sort distance sums for type="inv_dist"
+
+
+### Other modified files:
+
+* CITATION
+    - add citation of package with self-updating version and year
+
+    
+# Version 4.47
+#### (Committed 2026-01-20)
+
+### Modified functions:
+
+* cleanCoords
+    - consider NAs as presences in 'abs.col'
+    - fix error when year.min = NULL
+    
+    
+# Version 4.46 -> CRAN
 #### (Committed 2026-01-05)
 
 ### Modified functions:
