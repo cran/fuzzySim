@@ -1,8 +1,8 @@
 Package: fuzzySim
 Type: Package
 Title: Fuzzy Similarity in Species Distributions
-Version: 4.48
-Date: 2026-02-16
+Version: 4.50
+Date: 2026-03-27
 Authors@R: c(person(given = c("A.", "Marcia"),
                     family = "Barbosa",
                     role = "aut"),
@@ -29,7 +29,7 @@ License: GPL-3
 URL: http://fuzzysim.r-forge.r-project.org/
 BugReports: https://github.com/AMBarbosa/fuzzySim/issues
 NeedsCompilation: no
-Packaged: 2026-02-16 16:53:58 UTC; marcia
+Packaged: 2026-03-27 12:13:33 UTC; marcia
 Author: A. Marcia Barbosa [aut],
   Alba Estrada [ctb],
   Paul Melloy [ctb],
@@ -37,4 +37,4 @@ Author: A. Marcia Barbosa [aut],
   A. Marcia Barbosa [cre]
 Depends: R (>= 2.10)
 Repository: CRAN
-Date/Publication: 2026-02-17 06:10:44 UTC
+Date/Publication: 2026-03-28 06:11:13 UTC
